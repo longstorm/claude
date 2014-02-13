@@ -5,4 +5,7 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :scm {:name "git"
         :url "https://github.com/goldfeld/claude.git"}
-  :dependencies [[org.clojure/clojure "1.5.1"]])
+  :dependencies [[org.clojure/clojure "1.5.1"]
+                 [org.clojure/clojurescript "0.0-2014"]
+                 [org.bodil/redlobster "0.2.1"]]
+  :profiles {:dev {:dependencies [[org.bodil/cljs-noderepl "0.1.10"]]}})
