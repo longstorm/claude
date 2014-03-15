@@ -7,3 +7,7 @@
 
 (defn cwd []
   (.cwd node/process))
+
+(defn writeln [& lines]
+  (.write (.-stdout node/process)
+          (apply str (concat (interpose "\n" lines) ["\n"]))))
