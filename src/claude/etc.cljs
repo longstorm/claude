@@ -1,5 +1,4 @@
 (ns claude.etc
-  (:require-macros [redlobster.macros :refer [defer-node]])
   (:require [cljs.nodejs :as node]
             [claude.fs :refer [directory? mkdir list-dir-paths]]))
 

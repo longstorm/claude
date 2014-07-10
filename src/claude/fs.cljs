@@ -38,10 +38,16 @@
 (defn file? [path]
   (.isFile (.lstatSync (Fs) path)))
 
-(defn write-async
-  ([s path] (.writeFile (Fs) path s))
-  ([s path cb] (.writeFile (Fs) path s cb)))
+(defn write-file-and-forget [s path]
+  (.writeFile (Fs) path s))
 
-(defn append-async
-  ([s path] (.appendFile (Fs) path s))
-  ([s path cb] (.appendFile (Fs) path s cb)))
+(defn write-file
+  ([s path] (.writeFileSync (Fs) path s))
+  ([s path callback] (.writeFile (Fs) path s callback)))
+
+(defn append-file-and-forget [s path]
+  (.appendFile (Fs) path s))
+
+(defn append-file
+  ([s path] (.appendFileSync (Fs) path s))
+  ([s path callback] (.appendFile (Fs) path s callback)))
