@@ -20,5 +20,6 @@
 (def ^:private get-spawn
   (memoize (fn [] (.-spawn (Child_process)))))
 
-(defn spawn [bin & args]
-  ((get-spawn) bin (clj->js args)))
+(defn spawn
+  ([cmd args] ((get-spawn) cmd (clj->js args)))
+  ([cmd args opts] ((get-spawn) cmd (clj->js args) (clj->js opts))))
