@@ -1,4 +1,4 @@
-(defproject longstorm/claude "0.1.4"
+(defproject longstorm/claude "0.1.5"
   :description "Clojure meets node: the essentials wrapped in parens."
   :url "https://github.com/longstorm/claude"
   :author "Vic Goldfeld"
