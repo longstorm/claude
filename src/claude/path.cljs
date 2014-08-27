@@ -4,6 +4,23 @@
 
 (def ^:private Path (memoize #(node/require "path")))
 
+(defn extension [path]
+  (let [i (.lastIndexOf path ".")]
+    (when-not (= -1 i)
+      (subs path (inc i)))))
+
+(defn sans-extension
+  ([path]
+     (let [i (.lastIndexOf path ".")]
+       (if (= -1 i)
+         path
+         (subs path 0 i))))
+  ([ext path]
+     (let [i (.lastIndexOf path ".")]
+       (if (and (not= -1 i) (= ext (subs path (inc i))))
+         (subs path 0 i)
+         path))))
+
 (defn basename
   ([path] (.basename (Path) path))
   ([path ext] (.basename (Path) path ext)))
