@@ -4,14 +4,18 @@
 (def ^:private Fs (memoize #(node/require "fs")))
 (def ^:private Mkdirp (memoize #(node/require "mkdirp")))
 
-(defn slurp [path]
-  (.readFileSync (Fs) path))
+(defn slurp
+  ([path] (.readFileSync (Fs) path))
+  ([path cb] (.readFile (Fs) path cb)))
 
-(defn list-file-names [path]
-  (.readdirSync (Fs) path))
+(defn list-file-names
+  ([path] (.readdirSync (Fs) path))
+  ([path cb] (.readdir (Fs) path cb)))
 
-(defn list-file-paths [path]
-  (map #(str path "/" %) (list-file-names path)))
+(defn list-file-paths
+  ([path] (map #(str path "/" %) (list-file-names path)))
+  ([path cb] (list-file-names
+              path (fn [xs] (cb (map #(str path "/" %) xs))))))
 
 (defn exists? [path]
   (.existsSync (Fs) path))
