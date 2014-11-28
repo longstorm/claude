@@ -6,16 +6,25 @@
 
 (defn slurp
   ([path] (.readFileSync (Fs) path))
-  ([path cb] (.readFile (Fs) path cb)))
+  ([path cb]
+     (.readFile (Fs) path #(if %1
+                             (throw (Error. %1))
+                             (cb %2)))))
 
 (defn list-file-names
   ([path] (.readdirSync (Fs) path))
-  ([path cb] (.readdir (Fs) path cb)))
+  ([path cb]
+     (.readdir (Fs) path #(if %1
+                            (throw (Error. %1))
+                            (cb %2)))))
 
 (defn list-file-paths
   ([path] (map #(str path "/" %) (list-file-names path)))
-  ([path cb] (list-file-names
-              path (fn [xs] (cb (map #(str path "/" %) xs))))))
+  ([path cb]
+     (list-file-names
+      path (fn [err res] (if err
+                           (throw (Error. err))
+                           (cb (map #(str path "/" %) res)))))))
 
 (defn exists? [path]
   (.existsSync (Fs) path))
@@ -23,8 +32,13 @@
 (defn directory? [path]
   (.isDirectory (.lstatSync (Fs) path)))
 
-(defn list-dir-names [path]
-  (filter #(directory? (str path "/" %)) (list-file-names path)))
+(defn list-dir-names
+  ([path] (filter #(directory? (str path "/" %)) (list-file-names path)))
+  ([path cb]
+     (list-file-names
+      path (fn [err res] (if err
+                           (throw (Error. err))
+                           (cb (filter #(directory))))))))
 
 (defn list-dir-paths [path]
   (filter directory? (list-file-paths path)))
