@@ -9,7 +9,7 @@
 
 (defn exec [cmd]
   (let [chan (a/chan)]
-    ((get-exec-file) cmd (clj->js {}) (fn [err res] (a/put! chan res)))
+    ((get-exec) cmd (clj->js {}) (fn [err res] (a/put! chan res)))
     chan))
 
 (def ^:private get-exec-file
