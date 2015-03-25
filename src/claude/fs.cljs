@@ -8,37 +8,39 @@
   ([path] (.readFileSync (Fs) path))
   ([path cb]
      (.readFile (Fs) path #(if %1
-                             (throw (Error. %1))
+                             (throw (js/Error. %1))
                              (cb %2)))))
 
 (defn list-file-names
   ([path] (.readdirSync (Fs) path))
   ([path cb]
      (.readdir (Fs) path #(if %1
-                            (throw (Error. %1))
+                            (throw (js/Error. %1))
                             (cb %2)))))
 
 (defn list-file-paths
   ([path] (map #(str path "/" %) (list-file-names path)))
   ([path cb]
      (list-file-names
-      path (fn [err res] (if err
-                           (throw (Error. err))
-                           (cb (map #(str path "/" %) res)))))))
+      path (fn [err res]
+             (if err
+               (throw (js/Error. err))
+               (cb (map #(str path "/" %) res)))))))
 
 (defn exists? [path]
   (.existsSync (Fs) path))
 
 (defn directory? [path]
-  (.isDirectory (.lstatSync (Fs) path)))
+  (.isDirectory (.statSync (Fs) path)))
 
 (defn list-dir-names
-  ([path] (filter #(directory? (str path "/" %)) (list-file-names path)))
+  ([path] (filter directory? (map #(str path "/" %) (list-file-names path))))
   ([path cb]
      (list-file-names
-      path (fn [err res] (if err
-                           (throw (Error. err))
-                           (cb (filter #(directory))))))))
+      path (fn [err res]
+             (if err
+               (throw (js/Error. err))
+               (cb (filter directory? (map #(str path "/" %) res))))))))
 
 (defn list-dir-paths [path]
   (filter directory? (list-file-paths path)))
@@ -54,7 +56,7 @@
 ;;; FILES
 
 (defn file? [path]
-  (.isFile (.lstatSync (Fs) path)))
+  (.isFile (.statSync (Fs) path)))
 
 (defn write-file-and-forget [s path]
   (.writeFile (Fs) path s))
