@@ -2,33 +2,28 @@
   (:require [cljs.nodejs :as node]
             [cljs.core.async :as a]))
 
-(def ^:private Child_process (memoize #(node/require "child_process")))
-
-(def ^:private get-exec
-  (memoize (fn [] (.-exec (Child_process)))))
-
 (defn exec [cmd]
   (let [chan (a/chan)]
-    ((get-exec) cmd (clj->js {}) (fn [err res] (a/put! chan res)))
+    ((.-exec (node/require "child_process"))
+     cmd (clj->js {}) (fn [err res] (a/put! chan res)))
     chan))
-
-(def ^:private get-exec-file
-  (memoize (fn [] (.-execFile (Child_process)))))
 
 (defn exec-file
   ([cmd args]
-     (let [chan (a/chan)]
-       ((get-exec-file) cmd (clj->js args) (fn [err res] (a/put! chan res)))
-       chan))
+   (let [chan (a/chan)]
+     ((.-execFile (node/require "child_process"))
+      cmd (clj->js args) (fn [err res] (a/put! chan res)))
+     chan))
   ([cmd args opts]
-     (let [chan (a/chan)]
-       ((get-exec-file) cmd (clj->js args) (clj->js opts)
-        (fn [err res] (a/put! chan res)))
-       chan)))
-
-(def ^:private get-spawn
-  (memoize (fn [] (.-spawn (Child_process)))))
+   (let [chan (a/chan)]
+     ((.-execFile (node/require "child_process"))
+      cmd (clj->js args) (clj->js opts)
+      (fn [err res] (a/put! chan res)))
+     chan)))
 
 (defn spawn
-  ([cmd args] ((get-spawn) cmd (clj->js args)))
-  ([cmd args opts] ((get-spawn) cmd (clj->js args) (clj->js opts))))
+  ([cmd args]
+   ((.-spawn (node/require "child_process")) cmd (clj->js args)))
+  ([cmd args opts]
+   ((.-spawn (node/require "child_process"))
+    cmd (clj->js args) (clj->js opts))))

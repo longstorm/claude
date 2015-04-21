@@ -1,11 +1,16 @@
 (ns claude.https
   (:refer-clojure :exclude [get])
-  (:require-macros [redlobster.macros :refer [promise]])
   (:require [cljs.nodejs :as node]
             [cljs.core.async :as a]))
 
-(def ^:private Https (memoize #(node/require "https")))
-
 (defn get
-  ([url] (promise (.get (Https) url (fn [res] (realise res)))))
-  ([url callback] (.get (Https) url callback)))
+  ([url]
+   (let [chan (a/chan)
+         request (.get (node/require "https") url
+                       (fn [res] (a/put! chan res)))]
+     (.on request "error"
+          (fn [e]
+            (a/put! chan {:error "GET" :msg (.-message e)})
+            (a/close! chan)))
+     chan))
+  ([url callback] (.get (node/require "https") url callback)))

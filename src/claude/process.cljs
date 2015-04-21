@@ -1,8 +1,10 @@
 (ns claude.process
-  (:require [cljs.nodejs :as node]))
+  (:require [cljs.nodejs :as node]
+            [clojure.string :as strng]))
 
 (defn output [& lines]
-  (.on node/process "exit" #(.log js/console (clojure.string/join "\n" lines)))
+  (.on node/process "exit"
+       #(.log js/console (strng/join "\n" lines)))
   (.exit node/process 0))
 
 (defn exit

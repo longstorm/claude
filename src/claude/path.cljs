@@ -2,8 +2,6 @@
   (:require [cljs.nodejs :as node]
             [claude.etc :refer [windows?]]))
 
-(def ^:private Path (memoize #(node/require "path")))
-
 (defn extension [path]
   (let [i (.lastIndexOf path ".")]
     (when-not (= -1 i)
@@ -22,11 +20,13 @@
          path))))
 
 (defn basename
-  ([path] (.basename (Path) path))
-  ([path ext] (.basename (Path) path ext)))
+  ([path] (.basename (node/require "path") path))
+  ([path ext] (.basename (node/require "path") path ext)))
 
 (defn parent-path [path]
-  (.dirname (Path) path))
+  (.dirname (node/require "path") path))
+
+(def dirname parent-path)
 
 (defn parent-name [path]
   (basename (parent-path path)))
@@ -36,7 +36,7 @@
   (defn absolute? [path] (= \/ (first path))))
 
 (defn ^:private walk-up-origin [origin pred path overstep]
-  (print (count path) (last-index-of \/ path))
+  (print (count path) (.lastIndexOf path \/))
   (if-not (pred path)
     (walk-up-origin origin pred (parent-path path) overstep)
     (if (zero? overstep)
