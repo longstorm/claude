@@ -33,14 +33,13 @@
   (.isDirectory (.statSync (node/require "fs") path)))
 
 (defn list-dir-names
-  ([path]
-   (filter directory? (map #(str path "/" %) (list-file-names path))))
+  ([path] (filter #(directory? (str path "/" %)) (list-file-names path)))
   ([path cb]
-     (list-file-names
-      path (fn [err res]
-             (if err
-               (throw (js/Error. err))
-               (cb (filter directory? (map #(str path "/" %) res))))))))
+   (list-file-names
+    path (fn [err res]
+           (if err
+             (throw (js/Error. err))
+             (cb (filter #(directory? (str path "/" %)) res)))))))
 
 (defn list-dir-paths
   ([path] (filter directory? (list-file-paths path)))
